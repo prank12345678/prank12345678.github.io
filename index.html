@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You Are An Idiot</title>
+
+<title>You Are An Idiot! (Safe Recreation)</title>
 
 <style>
 *{
@@ -18,76 +19,101 @@ html,body{
     height:100%;
     overflow:hidden;
     font-family:Arial,Helvetica,sans-serif;
-    background:#000;
+    background:black;
 }
 
-#msg{
+#text{
     position:absolute;
     font-size:72px;
     font-weight:bold;
     text-align:center;
     white-space:nowrap;
     text-shadow:
-        4px 4px #000,
-        -4px -4px #000,
-        4px -4px #000,
-        -4px 4px #000;
+        4px 4px black,
+        -4px -4px black,
+        4px -4px black,
+        -4px 4px black;
+    animation:pulse .18s infinite alternate;
 }
 
-#smile{
-    font-size:72px;
+#faces{
+    font-size:64px;
 }
 
-#footer{
+#status{
     position:fixed;
     bottom:10px;
-    left:0;
     width:100%;
     text-align:center;
     color:white;
-    font-size:14px;
-    opacity:.75;
+    font-size:15px;
+    font-weight:bold;
+    text-shadow:1px 1px black;
 }
 
-.flash{
-    animation:flash .18s infinite alternate;
-}
-
-@keyframes flash{
+@keyframes pulse{
     from{
         transform:scale(1);
     }
     to{
-        transform:scale(1.05);
+        transform:scale(1.07);
     }
 }
 </style>
 </head>
 <body>
 
-<div id="msg" class="flash">
-    YOU ARE AN IDIOT<br>
-    <span id="smile">😀 😀 😀</span>
+<div id="text">
+    YOU ARE AN IDIOT!<br>
+    <span id="faces">😀 😀 😀</span>
 </div>
 
+<div id="status">
+    Click anywhere to start the music.
+</div>
 
 <script>
+
+/* ===========================================================
+   👇👇👇 GRANDMA-PROOF SETUP 👇👇👇
+
+   Replace EVERYTHING between the quotes below
+   with the URL to your MP3.
+
+   Example:
+
+   const AUDIO_URL = "https://prank12345678.github.io/idiot.mp3";
+
+   OR (recommended if the MP3 is in the same folder)
+
+   const AUDIO_URL = "./idiot.mp3";
+
+   =========================================================== */
+
+const AUDIO_URL = "PUT YOUR MP3 URL HERE";
+
+/* =========================================================== */
+
+const audio = new Audio(AUDIO_URL);
+audio.loop = true;
+audio.preload = "auto";
+
 const colors = [
 "#ff0000",
 "#00ff00",
+"#0000ff",
 "#ffff00",
-"#00ffff",
 "#ff00ff",
-"#ffffff",
-"#0000ff"
+"#00ffff",
+"#ffffff"
 ];
 
-const text = document.getElementById("msg");
+const text = document.getElementById("text");
 
-let x = 100;
+let x = 120;
 let y = 100;
 
-let dx = 6;
+let dx = 7;
 let dy = 5;
 
 let running = true;
@@ -103,17 +129,16 @@ function animate(){
     x += dx;
     y += dy;
 
-    if(x <= 0 || x + text.offsetWidth >= innerWidth)
+    if(x <= 0 || x + text.offsetWidth >= window.innerWidth){
         dx *= -1;
+    }
 
-    if(y <= 0 || y + text.offsetHeight >= innerHeight)
+    if(y <= 0 || y + text.offsetHeight >= window.innerHeight){
         dy *= -1;
+    }
 
     text.style.left = x + "px";
     text.style.top = y + "px";
-
-    document.body.style.background = randomColor();
-    text.style.color = randomColor();
 
     requestAnimationFrame(animate);
 }
@@ -121,26 +146,74 @@ function animate(){
 animate();
 
 setInterval(()=>{
+
     if(!running) return;
 
     document.body.style.background = randomColor();
     text.style.color = randomColor();
 
-    if(Math.random() > .7){
-        document.body.style.transform =
-            `rotate(${(Math.random()-.5)*2}deg)`;
-    }else{
-        document.body.style.transform = "rotate(0deg)";
+},100);
+
+async function startAudio(){
+
+    try{
+
+        if(
+            AUDIO_URL === "" ||
+            AUDIO_URL === "./idiot.mp3"
+        ){
+            document.getElementById("status").innerHTML =
+                "⚠️ Edit index.html and replace <b>PUT YOUR MP3 URL HERE</b> with your MP3 URL.";
+            return;
+        }
+
+        await audio.play();
+
+        document.getElementById("status").innerHTML =
+            "🎵 Music playing! Press ESC to stop.";
+
+    }catch(err){
+
+        document.getElementById("status").innerHTML =
+            "Couldn't play the audio. Check your MP3 URL.";
+
+        console.log(err);
+
     }
 
-},120);
+}
 
+document.addEventListener("click",startAudio,{once:true});
+document.addEventListener("keydown",startAudio,{once:true});
 
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        running=false;
+
+        audio.pause();
+
+        document.body.style.background="black";
+
+        text.style.left="50%";
+        text.style.top="50%";
+        text.style.transform="translate(-50%,-50%)";
+
+        document.getElementById("status").innerHTML =
+            "Stopped.";
+
+    }
+
+});
 
 window.addEventListener("resize",()=>{
-    x=Math.min(x,innerWidth-text.offsetWidth);
-    y=Math.min(y,innerHeight-text.offsetHeight);
+
+    x=Math.min(x,window.innerWidth-text.offsetWidth);
+    y=Math.min(y,window.innerHeight-text.offsetHeight);
+
 });
+
 </script>
 
 </body>
