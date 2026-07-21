@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You Are An Idiot (Safe Recreation)</title>
+<title>You Are An Idiot</title>
 
 <style>
 *{
@@ -70,9 +70,6 @@ html,body{
     <span id="smile">😀 😀 😀</span>
 </div>
 
-<div id="footer">
-    Safe recreation • Press Esc to stop animation
-</div>
 
 <script>
 const colors = [
@@ -138,17 +135,6 @@ setInterval(()=>{
 
 },120);
 
-document.addEventListener("keydown",e=>{
-    if(e.key==="Escape"){
-        running=false;
-        document.body.style.background="#000";
-        document.body.style.transform="none";
-        text.style.left="50%";
-        text.style.top="50%";
-        text.style.transform="translate(-50%,-50%)";
-        document.getElementById("footer").innerHTML="Animation stopped.";
-    }
-});
 
 window.addEventListener("resize",()=>{
     x=Math.min(x,innerWidth-text.offsetWidth);
